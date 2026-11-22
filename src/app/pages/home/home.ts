@@ -1,0 +1,184 @@
+import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { services } from '../../data/services.data';
+import { projects } from '../../data/projects.data';
+import { industries } from '../../data/industries.data';
+import { LanguageService } from '../../core/services/language.service';
+import { SectionTitle } from '../../shared/components/section-title/section-title';
+import { ServiceCard } from '../../shared/components/service-card/service-card';
+import { ProjectCard } from '../../shared/components/project-card/project-card';
+import { CtaSection } from '../../shared/components/cta-section/cta-section';
+
+@Component({
+  selector: 'app-home',
+  imports: [RouterLink, SectionTitle, ServiceCard, ProjectCard, CtaSection],
+  template: `
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <img class="hero-logo" src="assets/images/logo/VT-logo.png" alt="Visions-Tech logo" (error)="hideImage($event)" />
+          <span class="eyebrow">Visions-Tech</span>
+          <h1>Visions-Tech</h1>
+          <h2>{{ lang.t('tagline') }}</h2>
+          <p>{{ lang.t('arabicSlogan') }}</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" routerLink="/contact">{{ lang.t('startProject') }}</a>
+            <a class="btn btn-secondary" routerLink="/services">{{ lang.t('viewServices') }}</a>
+          </div>
+        </div>    
+        <div class="hero-panel reveal">
+          <div class="orbit-card main-stat">
+            <span>{{ lang.current() === 'en' ? 'Digital Growth' : 'نمو رقمي' }}</span>
+<strong>{{ lang.current() === 'en' ? 'Web • Dashboards • Apps' : 'مواقع • لوحات تحكم • تطبيقات' }}</strong>
+          </div>
+          <div class="metric-card"><strong>6</strong><span>{{ lang.t('services') }}</span></div>
+          <div class="metric-card"><strong>17</strong><span>{{ lang.t('portfolio') }}</span></div>
+          <div class="metric-card accent"><strong>24/7</strong><span>{{ lang.t('contact') }}</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container">
+      <app-section-title [eyebrow]="lang.t('services')" [title]="lang.t('servicesPreview')" [text]="lang.t('servicesPreviewText')" />
+      <div class="cards-grid three">
+        @for (service of featuredServices; track service.slug) {
+          <app-service-card [service]="service" />
+        }
+      </div>
+    </section>
+
+    <section class="section muted-section">
+      <div class="container split-grid">
+        <div>
+          <span class="eyebrow">{{ lang.t('whyNova') }}</span>
+          <h2>{{ lang.t('whyNova') }}</h2>
+          <p>{{ whyText }}</p>
+        </div>
+        <div class="feature-list">
+          @for (item of whyItems; track item.title) {
+            <div class="feature-row reveal">
+              <span>{{ item.number }}</span>
+              <div>
+                <h3>{{ item.title }}</h3>
+                <p>{{ item.text }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="section container">
+      <app-section-title [eyebrow]="lang.t('portfolio')" [title]="lang.t('portfolioPreview')" [text]="lang.current() === 'en' ? 'A selection of websites, apps, stores, and platforms delivered across business, education, commerce, and service sectors.' : 'مجموعة من مواقع وتطبيقات ومتاجر ومنصات رقمية لقطاعات الأعمال والتعليم والتجارة والخدمات.'" />
+      <div class="cards-grid three">
+        @for (project of featuredProjects; track project.slug) {
+          <app-project-card [project]="project" />
+        }
+      </div>
+    </section>
+
+    <section class="section muted-section">
+      <div class="container"><app-section-title [eyebrow]="lang.current() === 'en' ? 'News & Events' : 'الأخبار والفعاليات'" [title]="lang.current() === 'en' ? 'Ideas in motion.' : 'أفكار تتحرك.'" [text]="lang.current() === 'en' ? 'Notes, perspectives, and company updates from Visions-Tech.' : 'ملاحظات ورؤى وتحديثات من Visions-Tech.'" /><div class="cards-grid three"><article class="glass-card content-card reveal"><span class="eyebrow">Design</span><h3>Designing for momentum</h3><p>How small decisions create calmer digital products.</p><a class="text-link" routerLink="/news/designing-for-momentum">Read article →</a></article><article class="glass-card content-card reveal"><span class="eyebrow">Company</span><h3>From idea to platform</h3><p>The foundations behind products that grow with teams.</p><a class="text-link" routerLink="/news/from-idea-to-platform">Read article →</a></article><article class="glass-card content-card reveal"><span class="eyebrow">Perspective</span><h3>Arabic-first product design</h3><p>Making RTL feel intentional, not incidental.</p><a class="text-link" routerLink="/news/arabic-first-product-design">Read article →</a></article></div></div>
+    </section>
+
+    <section class="section container"><app-section-title [eyebrow]="lang.current() === 'en' ? 'Our Clients' : 'عملاؤنا'" [title]="lang.current() === 'en' ? 'Built together.' : 'نبنيه معاً.'" /><div class="logo-rail"><div class="partner-logo">MIRACLE</div><div class="partner-logo">WAJAD</div><div class="partner-logo">GANATAK</div><div class="partner-logo">ANMAR</div><div class="partner-logo">ESAA L</div><div class="partner-logo">RAFIQ</div></div></section>
+
+    <section class="section muted-section"><div class="container"><app-section-title [eyebrow]="lang.current() === 'en' ? 'Our Partners' : 'شركاؤنا'" [title]="lang.current() === 'en' ? 'The right ecosystem makes better work.' : 'المنظومة المناسبة تصنع عملاً أفضل.'" /><div class="logo-rail"><div class="partner-logo">CLOUD</div><div class="partner-logo">DATA</div><div class="partner-logo">OPEN AI</div><div class="partner-logo">PRODUCT</div><div class="partner-logo">SYSTEMS</div></div></div></section>
+
+    <section class="section container">
+      <app-section-title [eyebrow]="lang.t('industries')" [title]="lang.t('industries')" />
+      <div class="industry-grid">
+        @for (industry of industriesList; track lang.text(industry.name)) {
+          <div class="industry-card reveal"><span>{{ industry.icon }}</span>{{ lang.text(industry.name) }}</div>
+        }
+      </div>
+    </section>
+
+    <section class="section container">
+      <app-section-title [eyebrow]="lang.t('workProcess')" [title]="lang.t('workProcess')" />
+      <div class="process-grid">
+        @for (step of process; track step.title) {
+          <div class="process-step reveal">
+            <span>{{ step.no }}</span>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.text }}</p>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="section container">
+      <app-cta-section />
+    </section>
+  `,
+})
+export class Home {
+  readonly lang = inject(LanguageService);
+  readonly featuredServices = services.slice(0, 6);
+  readonly featuredProjects = projects;
+  readonly industriesList = industries;
+
+  get whyText(): string {
+    return this.lang.current() === 'en'
+      ? 'Visions-Tech builds practical digital solutions that look modern, load fast, and support real business goals without unnecessary complexity.'
+      : 'Visions-Tech تبني حلولاً رقمية عملية بتصميم عصري وأداء سريع وتركيز واضح على أهداف العمل بدون تعقيد غير ضروري.';
+  }
+
+  get whyItems() {
+   return this.lang.current() === 'en'
+  ? [
+      {
+        number: '01',
+        title: 'Modern & Responsive',
+        text: 'Beautiful, responsive websites and applications with fast performance, smooth animations, and an excellent experience across all devices.',
+      },
+      {
+        number: '02',
+        title: 'Built for Business',
+        text: 'Every solution is designed to help your business grow through clear user journeys, scalable architecture, and practical business-focused features.',
+      },
+      {
+        number: '03',
+        title: 'Affordable & Reliable',
+        text: 'Flexible pricing, custom development, and continuous support after launch to keep your digital products secure and up to date.',
+      },
+    ]
+  : [
+      {
+        number: '01',
+        title: 'تصميم عصري ومتجاوب',
+        text: 'مواقع وتطبيقات حديثة تعمل بكفاءة على جميع الأجهزة مع سرعة عالية وحركات سلسة وتجربة استخدام احترافية.',
+      },
+      {
+        number: '02',
+        title: 'حلول تخدم نمو أعمالك',
+        text: 'نطوّر حلولاً مخصصة تساعد على زيادة المبيعات، وتحسين الإدارة، وتبسيط العمليات، مع بنية قابلة للتوسع مستقبلاً.',
+      },
+      {
+        number: '03',
+        title: 'أسعار مرنة ودعم مستمر',
+        text: 'أسعار مناسبة، تطوير مخصص، ودعم فني وصيانة بعد التسليم لضمان استقرار مشروعك ونموه.',
+      },
+    ];
+  }
+
+  get process() {
+    return this.lang.current() === 'en'
+      ? [
+          { no: '01', title: 'Discover', text: 'We understand your goals, audience, and required features.' },
+          { no: '02', title: 'Design', text: 'We shape a premium interface and clear content structure.' },
+          { no: '03', title: 'Build', text: 'We develop responsive, reusable Angular components.' },
+          { no: '04', title: 'Launch', text: 'We test, refine, and prepare the project for hosting and growth.' },
+        ]
+      : [
+          { no: '01', title: 'الفهم', text: 'نفهم أهدافك وجمهورك والخصائص المطلوبة.' },
+          { no: '02', title: 'التصميم', text: 'نصمم واجهة احترافية وهيكل محتوى واضح.' },
+          { no: '03', title: 'التطوير', text: 'نطور مكونات Angular متجاوبة وقابلة لإعادة الاستخدام.' },
+          { no: '04', title: 'الإطلاق', text: 'نختبر ونحسن ونجهز المشروع للاستضافة والنمو.' },
+        ];
+  }
+
+  hideImage(event: Event): void {
+    (event.target as HTMLImageElement).style.display = 'none';
+  }
+}
